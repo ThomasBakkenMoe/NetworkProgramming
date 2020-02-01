@@ -1,17 +1,18 @@
 # include <thread>
 #include <iostream>
-
+#include <mutex>
+#include <vector>
 
 using namespace std;
 
-bool isPrime(int inNumber)
-{
+
+
+bool isPrime(int inNumber){
     bool divisible = false;
 
     if (inNumber == 1){
         return true;
     }
-        
 
     for (int i = 2; i < inNumber / 2+1; i++)
     {
@@ -21,27 +22,59 @@ bool isPrime(int inNumber)
             break;
         }
     }
-
     return !divisible;
 }
 
-void checkInterval(int start, int stop, int numberOfThreads)
+vector<int> checkInterval(int start, int stop, int numberOfThreads)
 {
-    for (int i = start; i < stop; i++)
-    {
-        if (isPrime(i))
-        {
-            cout << i << "\n";
-        }
+    mutex valueLock;
+    vector<thread> threads;
+    vector<int> primeNumbers;
+    int valueToCheck = start;
+
+    for(int i=0; i<numberOfThreads; i++){
+        threads.emplace_back(([&valueToCheck, &valueLock, &stop, &primeNumbers] {
+            
+            while(true){
+           
+                if (valueToCheck < stop)
+                {
+                    valueLock.lock();
+                    if (isPrime(valueToCheck))
+                    {
+                        primeNumbers.emplace_back(valueToCheck);
+                        /*
+                        cout << valueToCheck << "\n";
+                        cout << "hello from thread" << i << "\n";
+                        */
+                    }
+                    valueToCheck++;
+                    valueLock.unlock();
+                } else
+                {
+                    break;
+                }
+            }
+        }));
     }
+
+    for(auto &thread : threads){
+        thread.join();
+    }
+
+    return primeNumbers;
+
 }
 
 
 
 int main()
-{
+{   
+vector<int> list = checkInterval(2,1000, 4);
 
-checkInterval(2,100, 4);
+for(auto integer : list){
+    cout << integer << "\n";
+}
 
 }
 
