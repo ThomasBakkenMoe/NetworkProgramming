@@ -31,29 +31,31 @@ vector<int> checkInterval(int start, int stop, int numberOfThreads)
     vector<thread> threads;
     vector<int> primeNumbers;
     int valueToCheck = start;
+    mutex listLock;
 
     for(int i=0; i<numberOfThreads; i++){
-        threads.emplace_back(([i, &valueToCheck, &valueLock, &stop, &primeNumbers] {
-            
-            while(true){
-           
-                if (valueToCheck < stop)
-                {
-                    valueLock.lock();
-                    if (isPrime(valueToCheck))
+        threads.emplace_back(([i, &valueToCheck, &valueLock, &stop, &primeNumbers, &listLock] {
+            int localValue = 0;
+            while(localValue < stop){
+
+
+                valueLock.lock();
+                localValue = valueToCheck;
+                valueToCheck++;
+                valueLock.unlock();
+
+
+                    if (isPrime(localValue))
                     {
-                        primeNumbers.emplace_back(valueToCheck);
-                        /*
-                        cout << valueToCheck << "\n";
-                        cout << "hello from thread" << i << "\n";
-                        */
+                        listLock.lock();
+                        primeNumbers.emplace_back(localValue);
+
+                        cout << localValue << endl;
+                        cout << "hello from thread" << i << endl;
+                        listLock.unlock();
+
                     }
-                    valueToCheck++;
-                    valueLock.unlock();
-                } else
-                {
-                    break;
-                }
+
             }
         }));
     }
@@ -62,6 +64,7 @@ vector<int> checkInterval(int start, int stop, int numberOfThreads)
         thread.join();
     }
 
+    //TODO: Need to sort list before return
     return primeNumbers;
 
 }
@@ -70,10 +73,10 @@ vector<int> checkInterval(int start, int stop, int numberOfThreads)
 
 int main()
 {   
-vector<int> list = checkInterval(2,1000, 4);
+vector<int> list = checkInterval(1,100000, 7);
 
 for(auto integer : list){
-    cout << integer << "\n";
+    //cout << integer << "\n";
 }
 
 cout << "Found " << list.size() << " prime numbers";
