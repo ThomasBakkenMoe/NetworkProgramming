@@ -50,8 +50,9 @@ vector<int> checkInterval(int start, int stop, int numberOfThreads)
                         listLock.lock();
                         primeNumbers.emplace_back(localValue);
 
-                        cout << localValue << endl;
-                        cout << "hello from thread" << i << endl;
+                        //FOR TESTING THREAD OUTPUT
+                        //cout << localValue << endl;
+                        //cout << "hello from thread" << i << endl;
                         listLock.unlock();
 
                     }
@@ -65,6 +66,7 @@ vector<int> checkInterval(int start, int stop, int numberOfThreads)
     }
 
     //TODO: Need to sort list before return
+    sort(primeNumbers.begin(), primeNumbers.end());
     return primeNumbers;
 
 }
@@ -76,7 +78,7 @@ int main()
 vector<int> list = checkInterval(1,100000, 7);
 
 for(auto integer : list){
-    //cout << integer << "\n";
+    cout << integer << "\n";
 }
 
 cout << "Found " << list.size() << " prime numbers";
