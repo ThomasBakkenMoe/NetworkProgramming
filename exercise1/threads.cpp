@@ -11,7 +11,7 @@ bool isPrime(int inNumber){
     bool divisible = false;
 
     if (inNumber == 1){
-        return true;
+        return false;
     }
 
     for (int i = 2; i < (inNumber / 2)+1; i++)
