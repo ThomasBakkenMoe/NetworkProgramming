@@ -33,7 +33,7 @@ vector<int> checkInterval(int start, int stop, int numberOfThreads)
     int valueToCheck = start;
 
     for(int i=0; i<numberOfThreads; i++){
-        threads.emplace_back(([&valueToCheck, &valueLock, &stop, &primeNumbers] {
+        threads.emplace_back(([i, &valueToCheck, &valueLock, &stop, &primeNumbers] {
             
             while(true){
            
@@ -76,6 +76,8 @@ for(auto integer : list){
     cout << integer << "\n";
 }
 
+cout << "Found " << list.size() << " prime numbers";
+ 
 }
 
 
