@@ -8,9 +8,8 @@ using namespace std;
 
 
 bool isPrime(int inNumber){
-    bool divisible = false;
 
-    if (inNumber == 1){
+    if (inNumber <= 1){
         return false;
     }
 
@@ -18,11 +17,11 @@ bool isPrime(int inNumber){
     {
         if (inNumber % i == 0)
         {
-            divisible = true;
-            break;
+           return false;
         }
     }
-    return !divisible;
+
+    return true;
 }
 
 vector<int> checkInterval(int start, int stop, int numberOfThreads)
@@ -34,8 +33,9 @@ vector<int> checkInterval(int start, int stop, int numberOfThreads)
     mutex listLock;
 
     for(int i=0; i<numberOfThreads; i++){
-        threads.emplace_back(([i, &valueToCheck, &valueLock, &stop, &primeNumbers, &listLock] {
+        threads.emplace_back(([i, &valueToCheck, &valueLock, stop, &primeNumbers, &listLock] {
             int localValue = 0;
+            int numbersProcessed = 0;
             while(localValue < stop){
 
 
@@ -51,11 +51,13 @@ vector<int> checkInterval(int start, int stop, int numberOfThreads)
                         primeNumbers.emplace_back(localValue);
 
                         //FOR TESTING THREAD OUTPUT
-                        //cout << localValue << endl;
-                        //cout << "hello from thread" << i << endl;
+                        cout << localValue << endl;
+                        cout << "hello from thread" << i << endl;
+                        numbersProcessed++;
                         listLock.unlock();
 
                     }
+
 
             }
         }));
@@ -74,11 +76,11 @@ vector<int> checkInterval(int start, int stop, int numberOfThreads)
 
 
 int main()
-{   
+{
 vector<int> list = checkInterval(1,100000, 7);
 
 for(auto integer : list){
-    cout << integer << "\n";
+   // cout << integer << "\n";
 }
 
 cout << "Found " << list.size() << " prime numbers";
