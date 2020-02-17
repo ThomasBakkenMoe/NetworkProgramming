@@ -1,26 +1,37 @@
 #include <iostream>
 #include <list>
 #include <thread>
+#include <vector>
 #include <condition_variable>
 #include <mutex>
-#include <atomic>
-#include <vector>
+
 
 using namespace std;
 
 class Workers{
 
+private:
+    vector<thread> threads;
+    list<function<void()>> tasks;
+    mutex wait_mutex;
+    condition_variable cv;
+    int noOfThreads;
+    bool stopThread = false;
+
 public:
 
-    Workers(int threads) {
+    explicit Workers(int threads) {
         noOfThreads = threads;
     }
 
 
-    void post(function<void()> task){
-        lock_guard<mutex> lock(tasks_mutex);
-        tasks.emplace_back(task);
-       // not correct place to place this --  cout << "task " << &task << " runs in thread " << this_thread::get_id() << endl;
+    void post(const function<void()> &task){
+        {
+            lock_guard<mutex> lock(wait_mutex);
+            tasks.emplace_back(task);
+        }
+
+        cv.notify_one();
     }
 
     void start(){
@@ -30,39 +41,46 @@ public:
                     {
                         function<void()> task;
                         {
-                            lock_guard<mutex> lock(tasks_mutex);
-                            // TODO: use conditional variable
 
-                            if (!tasks.empty())
-                            {
-                                task = *tasks.begin(); // Copy task for later use
-                                tasks.pop_front(); // Remove task from list
+                            unique_lock<mutex> lock(wait_mutex);
+
+                            while(!stopThread && tasks.empty()){
+                                cv.wait(lock);
                             }
 
+                            if (tasks.empty())
+                            {
+                                return;
+                            }
+
+                            task = *tasks.begin(); // Copy task for later use
+                            tasks.pop_front(); // Remove task from list
                         }
-                        if (task)
-                            task(); // Run task outside of mutex lock
+
+                        task_timeout(25);
+                        task(); // Run task outside of mutex lock
+
                     }
 
                 });
             }
     }
 
-    void stop(vector<thread> threads){
+    void join(){
         for (auto &thread : threads)
             thread.join();
+        stop();
     }
 
-    void post_timeout(int timeoutMs){
+    void stop(){
+        stopThread = true;
+        cv.notify_all();
+    }
+
+    void task_timeout(int timeoutMs){
         this_thread::sleep_for(std::chrono::milliseconds(timeoutMs));
     }
 
-
-private:
-    vector<thread> threads;
-    list<function<void()>> tasks;
-    mutex tasks_mutex;
-    int noOfThreads;
 };
 
 int main() {
@@ -70,21 +88,38 @@ int main() {
     Workers event_loop(1);
     worker_threads.start(); // Create 4 internal threads
     event_loop.start(); // Create 1 internal thread
+
     worker_threads.post([] {
         // Task A
+        cout << "hello from task a" << endl;
     });
     worker_threads.post([] {
         // Task B
         // Might run in parallel with task A
+        cout << "hello from task b" << endl;
     });
     event_loop.post([] {
         // Task C
         // Might run in parallel with task A and B
+        cout << "hello from task C, Event loop" << endl;
     });
     event_loop.post([] {
+
+        cout << "Hello from task D, Event loop" << endl;
         // Task D
         // Will run after task C
         // Might run in parallel with task A and B
     });
+
+
+
+    this_thread::sleep_for(5s);
+    worker_threads.stop();
+    event_loop.stop();
+
+    worker_threads.join();
+    event_loop.join();
+
+
 
 }
