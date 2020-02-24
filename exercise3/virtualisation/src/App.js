@@ -55,6 +55,7 @@ function Input({title, codeRunner, children}){
       {title}
 
         <AceEditor
+            focus={true}
             mode="javascript"
             theme="monokai"
             className="codeInput"
@@ -71,9 +72,9 @@ function Input({title, codeRunner, children}){
                 tabSize: 2,
             }}/>
 
-        <FileTypeStatus filetype={language}/>
+        <FileTypeStatus filetype={"Javascript"}/>
         {children}
-        <button className="btn" onClick={runCode}>Run code</button>
+        <button className="btn margin-top-20" onClick={runCode}>Run code</button>
     </div>
   )
 }
