@@ -1,9 +1,17 @@
+import Axios from 'axios';
 
 
 class DockerService{
 
-    getOutput(code){
-        return Axios.get('host');
+    getOutputNode(code){
+
+        console.log("got");
+        console.log(code);
+        let json = {
+            input : code,
+        };
+
+        return Axios.post('http://localhost:9001/run/node', json);
     }
 
 }

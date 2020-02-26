@@ -11,14 +11,16 @@ import "ace-builds/src-noconflict/mode-python";
 import "ace-builds/src-noconflict/mode-ruby";
 import "ace-builds/src-noconflict/mode-golang";
 import "ace-builds/src-noconflict/mode-csharp";
+import {dockerService} from "./dockerService/DockerService";
 
 
 function App() {
 	const [output, setOutput] = useState("");
 
 	function runCode(code){
-		//call on code
-		//setOutput with return data,
+		dockerService.getOutputNode(code)
+            .then(res => setOutput(res.data))
+            .catch(rej => console.log(rej));
 	}
 
   return (
@@ -38,7 +40,7 @@ function App() {
 }
 
 function Input({title, codeRunner, children}){
-    const [code, setCode] = useState("");
+    let code = "";
     const [language, setLanguage] = useState("");
 
     function runCode(){
@@ -47,7 +49,8 @@ function Input({title, codeRunner, children}){
 
 
     function onChangeHandler(value){
-            setCode(...code, value);
+        console.log(value);
+           code = value;
     }
 
   return(
