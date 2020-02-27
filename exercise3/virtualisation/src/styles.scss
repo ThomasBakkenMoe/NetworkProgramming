@@ -1,5 +1,5 @@
 
-$body : #3e3e3e;
+$body : #4e4e4e;
 $primary-color: white;
 $secondary_color : #00b8d4;
 $console_log_text : teal;
@@ -8,9 +8,7 @@ $console_log : black;
 $tertiary_color: #00b8d4;
 
 body {
-  background: #0F2027;  /* fallback for old browsers */
-  background: -webkit-linear-gradient(to bottom, #2C5364, #203A43, #0F2027);  /* Chrome 10-25, Safari 5.1-6 */
-  background: linear-gradient(to bottom, #2C5364, #203A43, #0F2027); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  background: $body;  /* fallback for old browsers */
 
 }
 
@@ -34,7 +32,10 @@ body {
 
 .codeInput:focus{
   outline-color: teal;
+  outline-width: 3px;
 }
+
+
 
 .fileType{
   background: $secondary_color;
@@ -62,6 +63,9 @@ body {
   min-width: 100%;
   max-width: 100%;
   min-height: 200px;
+  white-space: pre-wrap;
+  overflow-y: auto;
+  resize: both;
 }
 
 .wrapper{

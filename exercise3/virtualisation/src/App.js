@@ -15,7 +15,7 @@ import {dockerService} from "./dockerService/DockerService";
 
 
 function App() {
-	const [output, setOutput] = useState("");
+	const [output, setOutput] = useState([]);
 
 	function runCode(code){
 		dockerService.getOutputNode(code)
@@ -49,7 +49,6 @@ function Input({title, codeRunner, children}){
 
 
     function onChangeHandler(value){
-        console.log(value);
            code = value;
     }
 
@@ -83,12 +82,16 @@ function Input({title, codeRunner, children}){
 }
 
 function Output({title, text}){
+
   return(
     <div className="margin-top-20">
       {title}
-      <textarea disabled className="console" defaultValue={text}>
+      <div  className="console">
+          {text.map(output => output)}
 
-      </textarea>
+      </div>
+
+
     </div>
   )
 }

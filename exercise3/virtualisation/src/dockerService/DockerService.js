@@ -4,9 +4,6 @@ import Axios from 'axios';
 class DockerService{
 
     getOutputNode(code){
-
-        console.log("got");
-        console.log(code);
         let json = {
             input : code,
         };
