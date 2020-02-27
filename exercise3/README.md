@@ -1,4 +1,8 @@
-# Run this first to setup
+# Online code runner
+A site for running and compiling code online.
+Only supports Javascript code atm.
+
+## Run this first to setup
 
 From root directory:
 ```
