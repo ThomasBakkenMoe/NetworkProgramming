@@ -21,11 +21,9 @@ public class ConnectionHandler extends Thread{
             BufferedReader reader = new BufferedReader(readConnection);
             PrintWriter writer = new PrintWriter(connection.getOutputStream(), true);
 
-
             writer.println("You are connected to the socket server");
 
             String msg = reader.readLine();
-
 
             while (msg != null) {
                 String[] result = msg.split(" ");
@@ -63,19 +61,13 @@ public class ConnectionHandler extends Thread{
                         break;
 
                 }
-
-
                 msg = reader.readLine();
-
             }
-
 
             connection.close();
         } catch (IOException e){
             e.printStackTrace();
         }
-
     }
-
 }
 
