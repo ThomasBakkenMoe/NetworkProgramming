@@ -18,12 +18,10 @@ const port =  4000;
 
 
 
-
-
 app.post('/run/node', (req, res) => {
 	console.log('Running javascript code');
 	let code = req.body.input;
-	let returnConsole = writeAndRunNodeFile(code, res);
+	writeAndRunNodeFile(code, res);
 });
 
 

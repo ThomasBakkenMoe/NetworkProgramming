@@ -1,4 +1,5 @@
 FROM node:10-alpine
+
 WORKDIR /app
 
 COPY ./server.js /app

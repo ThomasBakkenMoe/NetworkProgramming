@@ -1,4 +1,4 @@
-package com.company;
+package distributedProgramming;
 
 import java.io.*;
 import java.net.*;
